@@ -5,6 +5,29 @@ defmodule Cabify.CheckoutTest do
   setup :setup_products_and_rules
 
   describe "scan" do
+    test "sample datasets", opts do
+      {mug, voucher, tshirt, two_for_one, bulk_discount} =
+        {opts.mug, opts.voucher, opts.tshirt, opts.two_for_one, opts.bulk_discount}
+
+      checkout = Cabify.Checkout.new([two_for_one, bulk_discount])
+
+      products = [voucher, tshirt, mug]
+
+      assert checkout_products(checkout, products).total == 32.5
+
+      products = [voucher, tshirt, voucher]
+
+      assert checkout_products(checkout, products).total == 25.0
+
+      products = [tshirt, tshirt, tshirt, voucher, tshirt]
+
+      assert checkout_products(checkout, products).total == 81.0
+
+      products = [voucher, tshirt, voucher, voucher, mug, tshirt, tshirt]
+
+      assert checkout_products(checkout, products).total == 74.5
+    end
+
     test "regular products (no specific rules)", opts do
       checkout = Cabify.Checkout.new()
       mug = opts.mug
@@ -211,5 +234,11 @@ defmodule Cabify.CheckoutTest do
                total: 77
              }
     end
+  end
+
+  defp checkout_products(checkout, products) do
+    Enum.reduce(products, checkout, fn(product, acc) ->
+      Cabify.Checkout.scan(product, acc)
+    end)
   end
 end
