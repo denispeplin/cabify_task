@@ -8,6 +8,7 @@ defmodule Cabify.CheckoutTest do
       checkout = Cabify.Checkout.scan(mug, checkout)
 
       assert checkout == %Cabify.Checkout{
+               rules: [],
                products: [
                  mug
                ],
@@ -17,6 +18,7 @@ defmodule Cabify.CheckoutTest do
       checkout = Cabify.Checkout.scan(mug, checkout)
 
       assert checkout == %Cabify.Checkout{
+               rules: [],
                products: [
                  mug,
                  mug
@@ -27,6 +29,7 @@ defmodule Cabify.CheckoutTest do
       checkout = Cabify.Checkout.scan(mug, checkout)
 
       assert checkout == %Cabify.Checkout{
+               rules: [],
                products: [
                  mug,
                  mug,
