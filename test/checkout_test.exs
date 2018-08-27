@@ -4,6 +4,31 @@ defmodule Cabify.CheckoutTest do
 
   setup :setup_products_and_rules
 
+  describe "new" do
+    test "checkout without rules" do
+      checkout = Cabify.Checkout.new()
+
+      assert checkout == %Cabify.Checkout{
+               rules: [],
+               products: [],
+               total: 0
+             }
+    end
+
+    test "checkout with rules", opts do
+      checkout = Cabify.Checkout.new([opts.two_for_one, opts.bulk_discount])
+
+      assert checkout == %Cabify.Checkout{
+               products: [],
+               rules: [
+                 opts.two_for_one,
+                 opts.bulk_discount
+               ],
+               total: 00
+             }
+    end
+  end
+
   describe "scan" do
     test "sample datasets", opts do
       {mug, voucher, tshirt, two_for_one, bulk_discount} =
@@ -33,36 +58,18 @@ defmodule Cabify.CheckoutTest do
       mug = opts.mug
       checkout = Cabify.Checkout.scan(mug, checkout)
 
-      assert checkout == %Cabify.Checkout{
-               rules: [],
-               products: [
-                 mug
-               ],
-               total: 7.5
-             }
+      assert checkout.products == [mug]
+      assert checkout.total == 7.5
 
       checkout = Cabify.Checkout.scan(mug, checkout)
 
-      assert checkout == %Cabify.Checkout{
-               rules: [],
-               products: [
-                 mug,
-                 mug
-               ],
-               total: 15
-             }
+      assert checkout.products == [mug, mug]
+      assert checkout.total == 15
 
       checkout = Cabify.Checkout.scan(mug, checkout)
 
-      assert checkout == %Cabify.Checkout{
-               rules: [],
-               products: [
-                 mug,
-                 mug,
-                 mug
-               ],
-               total: 22.5
-             }
+      assert checkout.products == [mug, mug, mug]
+      assert checkout.total == 22.5
     end
 
     test "regular and two_for_one rule", opts do
@@ -71,49 +78,23 @@ defmodule Cabify.CheckoutTest do
 
       checkout = Cabify.Checkout.scan(voucher, checkout)
 
-      assert checkout == %Cabify.Checkout{
-               products: [
-                 voucher
-               ],
-               rules: [two_for_one],
-               total: 5.0
-             }
+      assert checkout.products == [voucher]
+      assert checkout.total == 5.0
 
       checkout = Cabify.Checkout.scan(mug, checkout)
 
-      assert checkout == %Cabify.Checkout{
-               products: [
-                 mug,
-                 voucher
-               ],
-               rules: [two_for_one],
-               total: 12.5
-             }
+      assert checkout.products == [mug, voucher]
+      assert checkout.total == 12.5
 
       checkout = Cabify.Checkout.scan(voucher, checkout)
 
-      assert checkout == %Cabify.Checkout{
-               products: [
-                 voucher,
-                 mug,
-                 voucher
-               ],
-               rules: [two_for_one],
-               total: 12.5
-             }
+      assert checkout.products == [voucher, mug, voucher]
+      assert checkout.total == 12.5
 
       checkout = Cabify.Checkout.scan(mug, checkout)
 
-      assert checkout == %Cabify.Checkout{
-               products: [
-                 mug,
-                 voucher,
-                 mug,
-                 voucher
-               ],
-               rules: [two_for_one],
-               total: 20
-             }
+      assert checkout.products == [mug, voucher, mug, voucher]
+      assert checkout.total == 20
     end
 
     test "regular, two_for_one and bulk_discount rules", opts do
@@ -124,120 +105,43 @@ defmodule Cabify.CheckoutTest do
 
       checkout = Cabify.Checkout.scan(tshirt, checkout)
 
-      assert checkout == %Cabify.Checkout{
-               products: [
-                 tshirt
-               ],
-               rules: [
-                 two_for_one,
-                 bulk_discount
-               ],
-               total: 20.0
-             }
+      assert checkout.products == [tshirt]
+      assert checkout.total == 20.0
 
       checkout = Cabify.Checkout.scan(voucher, checkout)
 
-      assert checkout == %Cabify.Checkout{
-               products: [
-                 voucher,
-                 tshirt
-               ],
-               rules: [
-                 two_for_one,
-                 bulk_discount
-               ],
-               total: 25.0
-             }
+      assert checkout.products == [voucher, tshirt]
+      assert checkout.total == 25.0
 
       checkout = Cabify.Checkout.scan(mug, checkout)
 
-      assert checkout == %Cabify.Checkout{
-               products: [
-                 mug,
-                 voucher,
-                 tshirt
-               ],
-               rules: [
-                 two_for_one,
-                 bulk_discount
-               ],
-               total: 32.5
-             }
+      assert checkout.products == [mug, voucher, tshirt]
+      assert checkout.total == 32.5
 
       checkout = Cabify.Checkout.scan(tshirt, checkout)
 
-      assert checkout == %Cabify.Checkout{
-               products: [
-                 tshirt,
-                 mug,
-                 voucher,
-                 tshirt
-               ],
-               rules: [
-                 two_for_one,
-                 bulk_discount
-               ],
-               total: 52.5
-             }
+      assert checkout.products == [tshirt, mug, voucher, tshirt]
+      assert checkout.total == 52.5
 
       checkout = Cabify.Checkout.scan(voucher, checkout)
 
-      assert checkout == %Cabify.Checkout{
-               products: [
-                 voucher,
-                 tshirt,
-                 mug,
-                 voucher,
-                 tshirt
-               ],
-               rules: [
-                 two_for_one,
-                 bulk_discount
-               ],
-               total: 52.5
-             }
+      assert checkout.products == [voucher, tshirt, mug, voucher, tshirt]
+      assert checkout.total == 52.5
 
       checkout = Cabify.Checkout.scan(mug, checkout)
 
-      assert checkout == %Cabify.Checkout{
-               products: [
-                 mug,
-                 voucher,
-                 tshirt,
-                 mug,
-                 voucher,
-                 tshirt
-               ],
-               rules: [
-                 two_for_one,
-                 bulk_discount
-               ],
-               total: 60
-             }
+      assert checkout.products == [mug, voucher, tshirt, mug, voucher, tshirt]
+      assert checkout.total == 60
 
       checkout = Cabify.Checkout.scan(tshirt, checkout)
 
-      assert checkout == %Cabify.Checkout{
-               products: [
-                 tshirt,
-                 mug,
-                 voucher,
-                 tshirt,
-                 mug,
-                 voucher,
-                 tshirt
-               ],
-               rules: [
-                 two_for_one,
-                 bulk_discount
-               ],
-               total: 77
-             }
+      assert checkout.products == [tshirt, mug, voucher, tshirt, mug, voucher, tshirt]
+      assert checkout.total == 77
     end
   end
 
   defp checkout_products(checkout, products) do
-    Enum.reduce(products, checkout, fn(product, acc) ->
+    Enum.reduce(products, checkout, fn product, acc ->
       Cabify.Checkout.scan(product, acc)
     end)
   end
