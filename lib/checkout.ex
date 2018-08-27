@@ -3,7 +3,7 @@ defmodule Cabify.Checkout do
   Checkouts products with or without specific rules (selected by product code).
 
   In real life could also hold a `discount` among with :total, and should be based
-  on decimal calculations instead of Float.
+  on decimal calculations instead of Float. I'd also implement a printed receipt here.
   """
 
   @enforce_keys [:rules, :products, :total]
