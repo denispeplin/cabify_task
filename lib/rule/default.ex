@@ -1,3 +1,5 @@
 defmodule Cabify.Rule.Default do
-  def sum(total, price), do: total + price
+  @behaviour Cabify.Rule
+
+  def sum(_products_count, total, price), do: total + price
 end
