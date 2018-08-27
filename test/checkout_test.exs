@@ -92,5 +92,124 @@ defmodule Cabify.CheckoutTest do
                total: 20
              }
     end
+
+    test "regular, two_for_one and bulk_discount rules", opts do
+      {mug, voucher, tshirt, two_for_one, bulk_discount} =
+        {opts.mug, opts.voucher, opts.tshirt, opts.two_for_one, opts.bulk_discount}
+
+      checkout = Cabify.Checkout.new([two_for_one, bulk_discount])
+
+      checkout = Cabify.Checkout.scan(tshirt, checkout)
+
+      assert checkout == %Cabify.Checkout{
+               products: [
+                 tshirt
+               ],
+               rules: [
+                 two_for_one,
+                 bulk_discount
+               ],
+               total: 20.0
+             }
+
+      checkout = Cabify.Checkout.scan(voucher, checkout)
+
+      assert checkout == %Cabify.Checkout{
+               products: [
+                 voucher,
+                 tshirt
+               ],
+               rules: [
+                 two_for_one,
+                 bulk_discount
+               ],
+               total: 25.0
+             }
+
+      checkout = Cabify.Checkout.scan(mug, checkout)
+
+      assert checkout == %Cabify.Checkout{
+               products: [
+                 mug,
+                 voucher,
+                 tshirt
+               ],
+               rules: [
+                 two_for_one,
+                 bulk_discount
+               ],
+               total: 32.5
+             }
+
+      checkout = Cabify.Checkout.scan(tshirt, checkout)
+
+      assert checkout == %Cabify.Checkout{
+               products: [
+                 tshirt,
+                 mug,
+                 voucher,
+                 tshirt
+               ],
+               rules: [
+                 two_for_one,
+                 bulk_discount
+               ],
+               total: 52.5
+             }
+
+      checkout = Cabify.Checkout.scan(voucher, checkout)
+
+      assert checkout == %Cabify.Checkout{
+               products: [
+                 voucher,
+                 tshirt,
+                 mug,
+                 voucher,
+                 tshirt
+               ],
+               rules: [
+                 two_for_one,
+                 bulk_discount
+               ],
+               total: 52.5
+             }
+
+      checkout = Cabify.Checkout.scan(mug, checkout)
+
+      assert checkout == %Cabify.Checkout{
+               products: [
+                 mug,
+                 voucher,
+                 tshirt,
+                 mug,
+                 voucher,
+                 tshirt
+               ],
+               rules: [
+                 two_for_one,
+                 bulk_discount
+               ],
+               total: 60
+             }
+
+      checkout = Cabify.Checkout.scan(tshirt, checkout)
+
+      assert checkout == %Cabify.Checkout{
+               products: [
+                 tshirt,
+                 mug,
+                 voucher,
+                 tshirt,
+                 mug,
+                 voucher,
+                 tshirt
+               ],
+               rules: [
+                 two_for_one,
+                 bulk_discount
+               ],
+               total: 77
+             }
+    end
   end
 end

@@ -25,7 +25,7 @@ defmodule Cabify.Checkout do
 
     %{
       checkout
-      | total: rule.sum(same_products_count, checkout.total, product.price),
+      | total: rule.__struct__.sum(same_products_count, checkout.total, product.price, rule),
         products: [product | checkout.products]
     }
   end

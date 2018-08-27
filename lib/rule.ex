@@ -1,5 +1,5 @@
 defmodule Cabify.Rule do
-  @callback sum(:float, :float, :float) :: :float
+  @callback sum(:float, :float, :float, :any) :: :float
 
   def get(rules, product) do
     rule =
@@ -8,9 +8,9 @@ defmodule Cabify.Rule do
       end)
 
     if rule do
-      rule.__struct__
+      rule
     else
-      Cabify.Rule.Default
+      %Cabify.Rule.Default{}
     end
   end
 end
