@@ -19,6 +19,12 @@ defmodule Cabify.Checkout do
   @doc """
   Scans products, places them into list, and calculates total
   """
+  def scan(code, checkout) when is_binary(code) do
+    Cabify.products()
+    |> Map.fetch!(code)
+    |> scan(checkout)
+  end
+
   def scan(product, checkout) do
     rule = Cabify.Rule.get(checkout.rules, product)
     same_products_count = same_products_count(checkout.products, product)

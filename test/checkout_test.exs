@@ -30,25 +30,24 @@ defmodule Cabify.CheckoutTest do
   end
 
   describe "scan" do
-    test "sample datasets", opts do
-      {mug, voucher, tshirt, two_for_one, bulk_discount} =
-        {opts.mug, opts.voucher, opts.tshirt, opts.two_for_one, opts.bulk_discount}
+    test "sample datasets by product codes", opts do
+      {two_for_one, bulk_discount} = {opts.two_for_one, opts.bulk_discount}
 
       checkout = Cabify.Checkout.new([two_for_one, bulk_discount])
 
-      products = [voucher, tshirt, mug]
+      products = ["VOUCHER", "TSHIRT", "MUG"]
 
       assert checkout_products(checkout, products).total == 32.5
 
-      products = [voucher, tshirt, voucher]
+      products = ["VOUCHER", "TSHIRT", "VOUCHER"]
 
       assert checkout_products(checkout, products).total == 25.0
 
-      products = [tshirt, tshirt, tshirt, voucher, tshirt]
+      products = ["TSHIRT", "TSHIRT", "TSHIRT", "VOUCHER", "TSHIRT"]
 
       assert checkout_products(checkout, products).total == 81.0
 
-      products = [voucher, tshirt, voucher, voucher, mug, tshirt, tshirt]
+      products = ["VOUCHER", "TSHIRT", "VOUCHER", "VOUCHER", "MUG", "TSHIRT", "TSHIRT"]
 
       assert checkout_products(checkout, products).total == 74.5
     end
