@@ -1,6 +1,6 @@
 # Cabify
 
-Cabify code challenge implemented in Elixir
+Cabify code challenge implemented in Elixir. Task description is [here](TASK_DESCRIPTION.md).
 
 ## Usage
 
